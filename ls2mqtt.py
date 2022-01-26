@@ -2,6 +2,8 @@ import traceback
 from mqtt_client import MQTTServer
 import datetime
 import serial
+import time
+from pprint import pprint
 
 house_id = 1
 mqtt_topic = 'living_sensibly'
@@ -70,15 +72,22 @@ if __name__ == '__main__':
                      root_topic='sensible_living')
     while True:
         try:
-            with serial.Serial(receiver_port, 9600, timeout=90*60) as ser:
+            print("(re)open port")
+            with serial.Serial(receiver_port, 9600, timeout=60*65) as ser:
                 while True:
-                    msg = ser.readline().decode()
-                    if msg:
+                    msgraw = ser.readline()
+                    msg = msgraw.decode()
+                    if len(msg)==0:
+                        print("no msg / timeout")
+                    else:
                         print(f"received: {msg}")
                         parsed = ParseSensibleLiving(msg)
                         if parsed:
                             parsed.publish(mqtt)
-        except:
-            print('jumping jack crash.')
+                        else:
+                            print("Not  parsed")
+
+        except Exception as e:
+            print('jumping jack crash: {e}')
             print(traceback.format_exc())
 

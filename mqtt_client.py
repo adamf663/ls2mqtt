@@ -14,7 +14,7 @@ class MQTTServer:
 
     def client_connect_callback(self, client, userdata, flags_dict, rc):
         print(f'Connected with result code {rc}')
-        client.subscribe(f'{self.root_topic}/#')
+        #client.subscribe(f'{self.root_topic}/#')
 
     def client_publish_callback(self, client, userdata, mid):
         print(f'published.  userdata={userdata}, message id={mid}')
